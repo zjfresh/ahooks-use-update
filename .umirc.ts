@@ -13,37 +13,16 @@ export default defineConfig({
     {
       path: '/',
       redirect: '/index',
-    },
+  },
     {
       name: '首页',
       path: '/index',
       component: './Index',
     },
     {
-      name: '首次异加载 一级栏正常 - CRUD 示例',
-      path: '/table',
+      name: '文档示例',
+      path: '/docs',
       component: './Docs',
-    },
-    {
-      path: '/mid',
-      name: '菜单',
-      routes: [
-        {
-          name: '首页',
-          path: '/mid/index',
-          component: './Index',
-        },
-        // {
-        //   name: '权限演示',
-        //   path: '/mid/access',
-        //   component: './Access',
-        // },
-        {
-          name: '首次异加载 二级栏异常 CRUD 示例',
-          path: '/mid/table',
-          component: './Docs',
-        },
-      ],
     },
   ],
   npmClient: 'pnpm',
