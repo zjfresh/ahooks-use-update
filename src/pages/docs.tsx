@@ -1,37 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { clearCache, useAntdTable, useMount } from 'ahooks';
-
-function sleep<T extends any>(value: T, timeout?: number) {
-  return new Promise<T>((rs) => {
-    setTimeout(() => {
-      rs(value);
-      console.log(value);
-    }, timeout || 2000);
-  });
-}
+import { useUpdate, useMount, useCreation } from 'ahooks';
 
 const DocsPage = () => {
   const countRef = useRef(0);
-  console.log('🚀 ~ file: index.tsx ~ line 52 ~ countRef pre', countRef.current);
+  console.log('🚀 ~ file: index.tsx ~ line 7 ~ countRef pre', countRef.current);
   countRef.current = countRef.current + 1;
 
-  console.log('🚀 ~ file: index.tsx ~ line 52 ~ countRef after', countRef.current);
+  console.log('🚀 ~ file: index.tsx ~ line 10 ~ countRef after', countRef.current);
+
+  const data = useCustom(
+    new Promise((requestBack) => {
+      setTimeout(() => {
+        requestBack('requestData');
+      }, 1500);
+    })
+  );
 
   useEffect(() => {
     console.log('useEffect [] 是只执行了一次');
   }, []);
-
-  const data = { list: [1, 2, 3], total: 3 };
-  const { tableProps, run } = useAntdTable(() => sleep<typeof data>(data, 150), {
-    cacheKey: 'test-cache-key',
-    manual: true,
-    staleTime: -1,
-  });
-  useMount(() => {
-    clearCache('test-cache-key');
-    run({ ...tableProps.pagination });
-  });
 
   console.time('模拟耗时的 render ');
   let n = 0;
@@ -48,5 +36,17 @@ const DocsPage = () => {
     </PageContainer>
   );
 };
+
+function useCustom(service: PromiseLike<string>) {
+  const update = useUpdate();
+  const dataRef = useRef<string | null>(null);
+
+  useCreation(() => {
+    service.then((data) => {
+      dataRef.current = data;
+      update();
+    });
+  }, []);
+}
 
 export default DocsPage;
